@@ -7,7 +7,8 @@ use DateTime;
 use DateTime::Format::Builder;
 use Convert::NLS_DATE_FORMAT;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
+our $nls_date_format = 'YYYY-MM-DD HH24:MI:SS';
 
 =head1 NAME
 
@@ -53,9 +54,24 @@ C<NLS_DATE_FORMAT>.  It currently just reads the value from
 
   $ENV{'NLS_DATE_FORMAT'}
 
+or if that is not set, from the package variable C<$nls_date_format>,
+which has a default value of C<YYYY-MM-DD HH24:MI:SS>.  This is
+a good default to have, but is not Oracle's default.  Dates will fail
+to parse if Oracle's NLS_DATE_FORMAT and the value from this method
+are not the same.
+
+If you want to use the default from this module, you can do something
+like this after you connect to Oracle:
+
+  $dbh->do(
+      "alter session set nls_date_format = '" .
+      DateTime::Format::Oracle->nls_date_format .
+      "'"
+  );
+
 =cut
 
-sub nls_date_format { $ENV{NLS_DATE_FORMAT} }
+sub nls_date_format { $ENV{NLS_DATE_FORMAT} || $nls_date_format }
 
 =item * parse_datetime
 

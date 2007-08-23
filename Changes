@@ -1,5 +1,10 @@
 Revision history for DateTime-Format-Oracle
 
+0.03  Thu Aug 23 10:41:48 2007
+	- set default value for 'nls_date_format' to use when %ENV
+	  variable not set
+        - thanks to jaybuffington@gmail.com for sample patch
+
 0.02  Fri Nov  3 23:40:32 2006
 	- CPAN release
 
