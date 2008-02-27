@@ -7,8 +7,9 @@ use DateTime;
 use DateTime::Format::Builder;
 use Convert::NLS_DATE_FORMAT;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our $nls_date_format = 'YYYY-MM-DD HH24:MI:SS';
+our $nls_timestamp_format = 'YYYY-MM-DD HH24:MI:SS';
 
 =head1 NAME
 
@@ -73,6 +74,32 @@ like this after you connect to Oracle:
 
 sub nls_date_format { $ENV{NLS_DATE_FORMAT} || $nls_date_format }
 
+=item * nls_timestamp_format
+
+This method is used to determine the current value of Oracle's
+C<NLS_TIMESTAMP_FORMAT>.  It currently just reads the value from
+
+  $ENV{'NLS_TIMESTAMP_FORMAT'}
+
+or if that is not set, from the package variable C<$nls_timestamp_format>,
+which has a default value of C<YYYY-MM-DD HH24:MI:SS>.  This is
+a good default to have, but is not Oracle's default.  Dates will fail
+to parse if Oracle's NLS_TIMESTAMP_FORMAT and the value from this method
+are not the same.
+
+If you want to use the default from this module, you can do something
+like this after you connect to Oracle:
+
+  $dbh->do(
+      "alter session set nls_timestamp_format = '" .
+      DateTime::Format::Oracle->nls_timestamp_format .
+      "'"
+  );
+
+=cut
+
+sub nls_timestamp_format { $ENV{NLS_TIMESTAMP_FORMAT} || $nls_timestamp_format }
+
 =item * parse_datetime
 
 Given a string containing a date and/or time representation
@@ -94,6 +121,18 @@ time information.
 
 *parse_date = \&parse_datetime;
 
+=item * parse_timestamp
+
+Given a string containing a date and/or time representation
+matching C<NLS_TIMESTAMP_FORMAT>, this method will return a new
+C<DateTime> object.
+
+If given an improperly formatted string, this method may die.
+
+=cut
+
+sub parse_timestamp { $_[0]->current_timestamp_parser->(@_); }
+
 =item * current_date_parser
 
 The current C<DateTime::Format::Builder> generated parsing method
@@ -102,6 +141,16 @@ used by C<parse_datetime> and C<parse_date>.
 =cut
 
 *current_date_parser = _parser_generator('current_date_format');
+
+=item * current_timestamp_parser
+
+The current C<DateTime::Format::Builder> generated parsing method
+used by C<parse_timestamp>.
+
+=cut
+
+*current_timestamp_parser = _parser_generator('current_timestamp_format');
+
 
 sub _parser_generator {
     # takes a method name for getting the current POSIX format
@@ -161,6 +210,32 @@ Alias to C<format_datetime>.
 
 *format_date = \&format_datetime;
 
+=item * format_timestamp
+
+Given a C<DateTime> object, this method returns a string matching
+the current value of C<NLS_TIMESTAMP_FORMAT>.
+
+It is important to keep the value of C<$ENV{'NLS_TIMESTAMP_FORMAT'}> the
+same as the value of the Oracle session variable C<NLS_TIMESTAMP_FORMAT>.
+
+To determine the current value of Oracle's C<NLS_TIMESTAMP_FORMAT>:
+
+  select NLS_TIMESTAMP_FORMAT from NLS_SESSION_PARAMETERS
+
+To reset Oracle's C<NLS_TIMESTAMP_FORMAT>:
+
+  alter session set NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'
+
+It is generally a good idea to set C<NLS_TIMESTAMP_FORMAT> to an
+unambiguos value, with four-digit year, and hour, minute, and second.
+
+=cut
+
+sub format_timestamp {
+    my ($self, $dt) = @_;
+    return $dt->strftime($self->current_timestamp_format);
+}
+
 =item * current_date_format
 
 The current generated method used by C<format_datetime>,
@@ -170,6 +245,16 @@ the C<strptime> translation of C<NLS_DATE_FORMAT>.
 =cut
 
 *current_date_format = _format_generator('nls_date_format');
+
+=item * current_timestamp_format
+
+The current generated method used by C<format_timestamp>,
+C<format_timestamp_with_time_zone>, and C<current_timestamp_parser> to keep track of
+the C<strptime> translation of C<NLS_TIMESTAMP_FORMAT>.
+
+=cut
+
+*current_timestamp_format = _format_generator('nls_timestamp_format');
 
 sub _format_generator {
     # takes a method name for getting the current Oracle format
@@ -229,8 +314,8 @@ Oracle returns all dates and timestamps in a time zone similar to
 the C<DateTime> floating time zone, except for 'timestamp with time zone'
 columns.
 
-I have not yet implemented C<parse_timestamp>, C<format_timestamp>,
-C<parse_timestamp_with_timezone>, nor C<format_timestamp_with_timezone>.
+I have not yet implemented C<parse_timestamp_with_timezone> nor
+C<format_timestamp_with_timezone>.
 
 =head2 INTERVAL ELEMENTS
 
@@ -266,7 +351,7 @@ Thanks to Dan Horne for his RFC draft of this module.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright (C) 2006 Nathan Gray.
+Copyright (C) 2006, 2008 Nathan Gray.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.4 or,

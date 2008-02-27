@@ -1,5 +1,9 @@
 Revision history for DateTime-Format-Oracle
 
+0.04  Wed Feb 27 11:09:41 2008
+	- implemented parse_timestamp and format_timestamp
+	- patch provided by Aldo Calpini
+
 0.03  Thu Aug 23 10:41:48 2007
 	- set default value for 'nls_date_format' to use when %ENV
 	  variable not set
