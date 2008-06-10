@@ -1,5 +1,10 @@
 Revision history for DateTime-Format-Oracle
 
+0.05  Tue Jun 10 12:55:55 2008
+	- implemented parse_timestamp_with_timezone and
+	  format_timestamp_with_timezone
+	- patch provided by Jozef Kutej
+
 0.04  Wed Feb 27 11:09:41 2008
 	- implemented parse_timestamp and format_timestamp
 	- patch provided by Aldo Calpini
