@@ -1,5 +1,10 @@
 Revision history for DateTime-Format-Oracle
 
+0.06  Tue Oct 11 21:18:12 2011
+	- added a test that specifies subsecond granularity
+	- now requires Convert::NLS_DATE_FORMAT 0.03
+	  (Thank you Jon Bjornstad and Zefram)
+
 0.05  Tue Jun 10 12:55:55 2008
 	- implemented parse_timestamp_with_timezone and
 	  format_timestamp_with_timezone

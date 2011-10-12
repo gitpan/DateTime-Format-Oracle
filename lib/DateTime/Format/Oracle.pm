@@ -7,7 +7,7 @@ use DateTime;
 use DateTime::Format::Builder;
 use Convert::NLS_DATE_FORMAT;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 our $nls_date_format = 'YYYY-MM-DD HH24:MI:SS';
 our $nls_timestamp_format = 'YYYY-MM-DD HH24:MI:SS';
 our $nls_timestamp_tz_format = 'YYYY-MM-DD HH24:MI:SS TZHTZM';
@@ -436,7 +436,7 @@ Thanks to Dan Horne for his RFC draft of this module.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright (C) 2006, 2008 Nathan Gray.
+Copyright (C) 2006, 2008, 2011 Nathan Gray.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.4 or,

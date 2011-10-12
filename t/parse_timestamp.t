@@ -1,5 +1,5 @@
 use strict;
-use Test::More tests => 4 * 7; # strings * methods
+use Test::More tests => 5 * 7; # strings * methods
 
 use DateTime::Format::Oracle;
 
@@ -38,6 +38,16 @@ my %tests = (
     },
     '15-FEB-03 02.39.06.167901 PM' => {
         format    => 'DD-MON-RR HH.MI.SSXFF AM',
+        year      => 2003,
+        month     => 2,
+        day       => 15,
+        hour      => 14,
+        minute    => 39,
+        second    => 6,
+        time_zone => 'floating',
+    },
+    '15-FEB-03 02.39.06.167901987 PM' => {
+        format    => 'DD-MON-RR HH.MI.SSXFF9 AM',
         year      => 2003,
         month     => 2,
         day       => 15,
